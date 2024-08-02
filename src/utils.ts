@@ -2,12 +2,12 @@ import { TChain } from "@gitcoin/gitcoin-chain-data";
 import { Chain } from "./types";
 
 export const getProgressColor = (percentage: number) => {
-  if (percentage < 10) return "bg-red-800"; // Very low progress
-  if (percentage < 25) return "bg-red-600"; // Low progress
-  if (percentage < 40) return "bg-orange-500"; // Slightly low progress
-  if (percentage < 55) return "bg-yellow-400"; // Medium progress
-  if (percentage < 70) return "bg-yellow-300"; // Slightly high progress
-  if (percentage < 85) return "bg-green-300"; // High progress
+  if (percentage < 20) return "bg-red-800"; // Very low progress
+  if (percentage < 35) return "bg-red-600"; // Low progress
+  if (percentage < 50) return "bg-orange-500"; // Slightly low progress
+  if (percentage < 65) return "bg-yellow-400"; // Medium progress
+  if (percentage < 80) return "bg-yellow-300"; // Slightly high progress
+  if (percentage < 99) return "bg-green-300"; // High progress
   return "bg-green-500"; // Very high progress
 };
 
