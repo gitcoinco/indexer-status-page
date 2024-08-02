@@ -151,7 +151,7 @@ function App() {
               <div className="w-full bg-gray-700 rounded h-4">
                 <div
                   className={`h-4 rounded ${getProgressColor(
-                    chain.percentage,
+                    Number(chain.percentage),
                   )}`}
                   style={{ width: `${chain.percentage}%` }}
                 ></div>

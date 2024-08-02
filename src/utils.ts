@@ -1,7 +1,7 @@
 import { TChain } from "@gitcoin/gitcoin-chain-data";
 import { Chain } from "./types";
 
-export const getProgressColor = (percentage) => {
+export const getProgressColor = (percentage: number) => {
   if (percentage < 10) return "bg-red-800"; // Very low progress
   if (percentage < 25) return "bg-red-600"; // Low progress
   if (percentage < 40) return "bg-orange-500"; // Slightly low progress
