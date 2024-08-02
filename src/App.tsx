@@ -26,22 +26,27 @@ function App() {
           chain.rpcUrl,
         );
 
+        const latestBlock = blockNumber ?? 0;
+
         const startBlock = chain.startBlock; // Use fromBlock from subscriptions
         const { indexedToBlock, error: indexerError } = await fetchIndexedBlock(
           chain.chainId,
           indexerUrl + "/graphql",
         );
         const percentage =
-          blockNumber && indexedToBlock
-            ? ((indexedToBlock - startBlock) / (blockNumber - startBlock)) * 100
+          latestBlock && indexedToBlock
+            ? ((indexedToBlock - startBlock) / (latestBlock - startBlock)) * 100
             : 0;
 
         return {
           ...chain,
           startBlock,
-          latestBlock: blockNumber,
+          latestBlock,
           indexedBlock: indexedToBlock,
-          percentage: percentage.toFixed(2),
+          percentage:
+            percentage > 99.99 && latestBlock - indexedToBlock >= 10
+              ? "99.99"
+              : percentage.toFixed(2),
           rpcError,
           indexerError,
         };
@@ -109,6 +114,7 @@ function App() {
             id="refreshInterval"
             className="w-full p-2 bg-gray-800 border border-gray-700 rounded mb-10"
             value={refreshInterval}
+            min={1}
             onChange={(e) => setRefreshInterval(Number(e.target.value))}
           />
         </div>
@@ -136,7 +142,10 @@ function App() {
               ) : (
                 <div className="text-sm mb-1">
                   Start Block: {chain.startBlock}, Latest Block:{" "}
-                  {chain.latestBlock}
+                  {chain.latestBlock}, Missing:{" "}
+                  {chain.latestBlock && chain.indexedBlock
+                    ? Math.max(chain.latestBlock - chain.indexedBlock, 0)
+                    : "undefined"}
                 </div>
               )}
               {chain.indexerError ? (

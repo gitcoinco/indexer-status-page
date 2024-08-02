@@ -7,7 +7,7 @@ export const getProgressColor = (percentage: number) => {
   if (percentage < 50) return "bg-orange-500"; // Slightly low progress
   if (percentage < 65) return "bg-yellow-400"; // Medium progress
   if (percentage < 80) return "bg-yellow-300"; // Slightly high progress
-  if (percentage < 99) return "bg-green-300"; // High progress
+  if (percentage <= 99.99) return "bg-green-300"; // High progress
   return "bg-green-500"; // Very high progress
 };
 
@@ -29,7 +29,7 @@ export const gtcChainsToChains = (gtcChains: TChain[]): Chain[] => {
 // Function to fetch the latest block number from an RPC URL
 export async function fetchLatestBlock(
   rpcUrl: string,
-): Promise<{ blockNumber: number | null; error: string | null }> {
+): Promise<{ blockNumber: number; error: string | null }> {
   const requestData = {
     jsonrpc: "2.0",
     method: "eth_blockNumber",
@@ -55,7 +55,7 @@ export async function fetchLatestBlock(
     return { blockNumber: parseInt(blockNumberHex, 16), error: null };
   } catch (error) {
     console.error("Error fetching the latest block number:", error);
-    return { blockNumber: null, error: (error as Error).message };
+    return { blockNumber: 0, error: (error as Error).message };
   }
 }
 
@@ -63,7 +63,7 @@ export async function fetchLatestBlock(
 export async function fetchIndexedBlock(
   chainId: number,
   indexerUrl: string,
-): Promise<{ indexedToBlock: number | null; error: string | null }> {
+): Promise<{ indexedToBlock: number; error: string | null }> {
   const query = `
     query {
       subscriptions(first: 1, filter: {chainId: {equalTo: ${chainId}}}) {
@@ -87,9 +87,9 @@ export async function fetchIndexedBlock(
 
     const responseData = await response.json();
     const indexedToBlock = responseData.data.subscriptions[0]?.indexedToBlock;
-    return { indexedToBlock: indexedToBlock ?? null, error: null };
+    return { indexedToBlock: indexedToBlock ?? 0, error: null };
   } catch (error) {
     console.error("Error fetching the indexed block number:", error);
-    return { indexedToBlock: null, error: (error as Error).message };
+    return { indexedToBlock: 0, error: (error as Error).message };
   }
 }
