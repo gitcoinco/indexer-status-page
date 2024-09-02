@@ -5,18 +5,22 @@ import {
   fetchLatestBlock,
   getProgressColor,
   gtcChainsToChains,
+  fetchIndexerVersion,
 } from "./utils";
 import { ProgressData } from "./types";
 
-// Chain data: array of objects containing chainId, name, rpcUrl, and startBlock
 const chains = gtcChainsToChains(getChains());
 
 function App() {
   const [indexerUrl, setIndexerUrl] = useState<string>(
     "https://grants-stack-indexer-v2.gitcoin.co",
   );
+  const [tempIndexerUrl, setTempIndexerUrl] = useState<string>(indexerUrl);
   const [progressData, setProgressData] = useState<ProgressData>([]);
   const [refreshInterval, setRefreshInterval] = useState<number>(10);
+  const [tempRefreshInterval, setTempRefreshInterval] =
+    useState<number>(refreshInterval);
+  const [indexerVersion, setIndexerVersion] = useState<string>("Unknown");
 
   // Function to update progress data
   const updateProgressData = async () => {
@@ -58,7 +62,21 @@ function App() {
 
   const handleIndexerUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value.trim();
-    setIndexerUrl(url.endsWith("/") ? url.slice(0, -1) : url);
+    setTempIndexerUrl(url.endsWith("/") ? url.slice(0, -1) : url);
+  };
+
+  const handleRefreshIntervalChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setTempRefreshInterval(Number(e.target.value));
+  };
+
+  const handleUpdateIndexerUrl = () => {
+    setIndexerUrl(tempIndexerUrl);
+  };
+
+  const handleUpdateRefreshInterval = () => {
+    setRefreshInterval(tempRefreshInterval);
   };
 
   const handleRpcChange = (chainId: number, newRpcUrl: string) => {
@@ -75,6 +93,7 @@ function App() {
   // Fetch data on initial render and when indexerUrl or refreshInterval changes
   useEffect(() => {
     updateProgressData();
+    fetchIndexerVersion(indexerUrl).then(setIndexerVersion);
 
     const interval = setInterval(() => {
       updateProgressData();
@@ -94,29 +113,48 @@ function App() {
           >
             Indexer URL
           </label>
-          <input
-            type="text"
-            id="indexerUrl"
-            className="w-full p-2 bg-gray-800 border border-gray-700 rounded"
-            value={indexerUrl}
-            onChange={handleIndexerUrlChange}
-          />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              id="indexerUrl"
+              className="flex-grow p-2 bg-gray-800 border border-gray-700 rounded-l"
+              value={tempIndexerUrl}
+              onChange={handleIndexerUrlChange}
+            />
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-r"
+              onClick={handleUpdateIndexerUrl}
+            >
+              Update
+            </button>
+          </div>
+          <div className="mb-2 mt-2">
+            <p>Indexer Version: {indexerVersion}</p>
+          </div>
         </div>
-        <div className="mt-6">
+        <div className="mt-6 mb-10">
           <label
             className="block text-sm font-medium mb-2"
             htmlFor="refreshInterval"
           >
             Refresh Interval (seconds)
           </label>
-          <input
-            type="number"
-            id="refreshInterval"
-            className="w-full p-2 bg-gray-800 border border-gray-700 rounded mb-10"
-            value={refreshInterval}
-            min={1}
-            onChange={(e) => setRefreshInterval(Number(e.target.value))}
-          />
+          <div className="flex gap-2">
+            <input
+              type="number"
+              id="refreshInterval"
+              className="flex-grow p-2 bg-gray-800 border border-gray-700 rounded-l"
+              value={tempRefreshInterval}
+              min={1}
+              onChange={handleRefreshIntervalChange}
+            />
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 rounded-r"
+              onClick={handleUpdateRefreshInterval}
+            >
+              Update
+            </button>
+          </div>
         </div>
         {progressData
           .sort((a, b) => Number(a.percentage) - Number(b.percentage))

@@ -4,8 +4,9 @@ import { Chain } from "./types";
 export const getProgressColor = (percentage: number) => {
   if (percentage < 20) return "bg-red-800"; // Very low progress
   if (percentage < 35) return "bg-red-600"; // Low progress
-  if (percentage < 50) return "bg-orange-500"; // Slightly low progress
-  if (percentage < 65) return "bg-yellow-400"; // Medium progress
+  if (percentage < 50) return "bg-orange-300"; // Slightly low progress
+  if (percentage < 65) return "bg-orange-600"; // Medium progress
+  if (percentage < 80) return "bg-yellow-400"; // Slightly high progress
   if (percentage < 80) return "bg-yellow-300"; // Slightly high progress
   if (percentage <= 99.99) return "bg-green-300"; // High progress
   return "bg-green-500"; // Very high progress
@@ -91,5 +92,19 @@ export async function fetchIndexedBlock(
   } catch (error) {
     console.error("Error fetching the indexed block number:", error);
     return { indexedToBlock: 0, error: (error as Error).message };
+  }
+}
+
+export async function fetchIndexerVersion(indexerUrl: string): Promise<string> {
+  try {
+    const response = await fetch(`${indexerUrl}/version`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const version = await response.text();
+    return version.trim();
+  } catch (error) {
+    console.error("Error fetching indexer version:", error);
+    return "Unknown";
   }
 }
