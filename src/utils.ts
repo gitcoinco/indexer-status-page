@@ -67,7 +67,7 @@ export async function fetchIndexedBlock(
 ): Promise<{ indexedToBlock: number; error: string | null }> {
   const query = `
     query {
-      subscriptions(first: 1, filter: {chainId: {equalTo: ${chainId}}}) {
+      subscriptions(filter: {chainId: {equalTo: ${chainId}}}) {
         indexedToBlock
       }
     }
@@ -87,7 +87,14 @@ export async function fetchIndexedBlock(
     }
 
     const responseData = await response.json();
-    const indexedToBlock = responseData.data.subscriptions[0]?.indexedToBlock;
+    const indexedToBlock =
+      Math.min(
+        ...responseData.data.subscriptions
+          .map((sub: { indexedToBlock: bigint }) => Number(sub.indexedToBlock))
+          .filter((indexedToBlock: number) => indexedToBlock > 0),
+        Infinity,
+      ) || 0;
+
     return { indexedToBlock: indexedToBlock ?? 0, error: null };
   } catch (error) {
     console.error("Error fetching the indexed block number:", error);
