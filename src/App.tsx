@@ -141,6 +141,7 @@ function App() {
         {showConfig && (
           <>
             <IndexerUrlSection
+              indexerUrl={indexerUrl}
               tempIndexerUrl={tempIndexerUrl}
               onIndexerUrlChange={handleIndexerUrlChange}
               onUpdateIndexerUrl={handleUpdateIndexerUrl}
@@ -148,6 +149,7 @@ function App() {
             />
 
             <RefreshIntervalSection
+              refreshInterval={refreshInterval}
               tempRefreshInterval={tempRefreshInterval}
               onRefreshIntervalChange={handleRefreshIntervalChange}
               onUpdateRefreshInterval={handleUpdateRefreshInterval}
@@ -165,6 +167,7 @@ function App() {
           progressData={progressData}
           indexerUrl={indexerUrl}
           onRpcChange={handleRpcChange}
+          onReindexSuccess={updateProgressData}
         />
       </div>
     </div>

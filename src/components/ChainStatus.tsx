@@ -8,12 +8,14 @@ interface ChainStatusProps {
   progressData: ProgressData;
   indexerUrl: string;
   onRpcChange: (chainId: number, newRpcUrl: string) => void;
+  onReindexSuccess: () => void;
 }
 
 const ChainStatus: React.FC<ChainStatusProps> = ({
   progressData,
   indexerUrl,
   onRpcChange,
+  onReindexSuccess,
 }) => {
   const { address } = useAccount();
 
@@ -46,14 +48,21 @@ const ChainStatus: React.FC<ChainStatusProps> = ({
       compareResult = a.chainId - b.chainId;
     } else if (sortOption === "missingBlocks") {
       const missingBlocksA =
-        a.latestBlock && a.indexedBlock
+        a.latestBlock && a.indexedBlock && a.indexedBlock !== Infinity
           ? a.latestBlock - a.indexedBlock
           : Infinity;
       const missingBlocksB =
-        b.latestBlock && b.indexedBlock
+        b.latestBlock && b.indexedBlock && b.indexedBlock !== Infinity
           ? b.latestBlock - b.indexedBlock
           : Infinity;
-      compareResult = missingBlocksA - missingBlocksB;
+
+      if (missingBlocksA === Infinity && missingBlocksB !== Infinity) {
+        compareResult = 1;
+      } else if (missingBlocksB === Infinity && missingBlocksA !== Infinity) {
+        compareResult = -1;
+      } else {
+        compareResult = missingBlocksA - missingBlocksB;
+      }
     } else if (sortOption === "indexingStatus") {
       compareResult = Number(a.percentage) - Number(b.percentage);
     }
@@ -124,10 +133,14 @@ const ChainStatus: React.FC<ChainStatusProps> = ({
             <div className="flex items-center space-x-4 mb-2">
               <div className="text-sm">
                 Indexed Block:{" "}
-                {chain.indexedBlock === Infinity ? 0 : chain.indexedBlock}
+                {chain.indexedBlock === Infinity ? "N/A" : chain.indexedBlock}
               </div>
               {address && (
-                <ReIndex chainId={chain.chainId} url={`${indexerUrl}/index`} />
+                <ReIndex
+                  chainId={chain.chainId}
+                  url={`${indexerUrl}/index`}
+                  onSuccess={onReindexSuccess}
+                />
               )}
             </div>
           )}

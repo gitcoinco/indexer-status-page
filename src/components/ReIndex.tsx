@@ -6,7 +6,11 @@ import { signMessage } from "@wagmi/core";
 import { config } from "../wagmi";
 import ConfirmationModal from "../components/ConfirmationModal";
 
-const ReIndex = (props: { chainId: number; url: string }) => {
+const ReIndex = (props: {
+  chainId: number;
+  url: string;
+  onSuccess: () => void;
+}) => {
   const { address } = useAccount();
   const [isSigning, setIsSigning] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -44,6 +48,7 @@ const ReIndex = (props: { chainId: number; url: string }) => {
       if (response.status !== 200) {
         alert("Reindexing failed");
       }
+      props.onSuccess();
     } catch (error) {
       if (error instanceof Error) setErrorMessage(`Error: ${error.message}`);
     } finally {

@@ -1,6 +1,7 @@
 import React from "react";
 
 interface IndexerUrlSectionProps {
+  indexerUrl: string;
   tempIndexerUrl: string;
   onIndexerUrlChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onUpdateIndexerUrl: () => void;
@@ -8,6 +9,7 @@ interface IndexerUrlSectionProps {
 }
 
 const IndexerUrlSection: React.FC<IndexerUrlSectionProps> = ({
+  indexerUrl,
   tempIndexerUrl,
   onIndexerUrlChange,
   onUpdateIndexerUrl,
@@ -15,7 +17,7 @@ const IndexerUrlSection: React.FC<IndexerUrlSectionProps> = ({
 }) => (
   <div className="mb-6">
     <label className="block text-sm font-medium mb-2" htmlFor="indexerUrl">
-      Indexer URL
+      <b>Indexer Url:</b> {indexerUrl}
     </label>
     <div className="flex gap-2">
       <input
@@ -33,8 +35,10 @@ const IndexerUrlSection: React.FC<IndexerUrlSectionProps> = ({
         Update
       </button>
     </div>
-    <div className="mb-2 mt-2">
-      <p>Indexer Version: {indexerVersion}</p>
+    <div className="text-sm mb-2 mt-2">
+      <p>
+        <b>Indexer Version:</b> {indexerVersion}
+      </p>
     </div>
   </div>
 );

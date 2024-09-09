@@ -1,19 +1,21 @@
 import React from "react";
 
 interface RefreshIntervalSectionProps {
+  refreshInterval: number;
   tempRefreshInterval: number;
   onRefreshIntervalChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onUpdateRefreshInterval: () => void;
 }
 
 const RefreshIntervalSection: React.FC<RefreshIntervalSectionProps> = ({
+  refreshInterval,
   tempRefreshInterval,
   onRefreshIntervalChange,
   onUpdateRefreshInterval,
 }) => (
-  <div className="mt-6 mb-10">
+  <div className="mt-6 mb-5">
     <label className="block text-sm font-medium mb-2" htmlFor="refreshInterval">
-      Refresh Interval (seconds)
+      <b>Refresh Interval:</b> {refreshInterval} seconds
     </label>
     <div className="flex gap-2">
       <input
